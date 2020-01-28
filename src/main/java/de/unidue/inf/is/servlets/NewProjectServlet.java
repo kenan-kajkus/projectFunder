@@ -1,6 +1,9 @@
 package de.unidue.inf.is.servlets;
 import de.unidue.inf.is.domain.Project;
+import de.unidue.inf.is.utils.DBUtil;
+
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +35,12 @@ public final class NewProjectServlet extends HttpServlet {
         
         String[] categories ={catHealthWellness,catArtCreativeWork,
         catEducation,catTechInnovation,catUbuntuTouch,catUbuntuTouchPro,catNoPredecessor};
-        System.out.println(description);
-       // this.project = new Project(title, )
+        System.out.println("TEST " + title);
+        try {
+			DBUtil.insertProject(title,description,financeLimit);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

@@ -9,9 +9,7 @@
 		<div id="btn_base_divid">
 					<!--Die Datenbank funder ist ${db2exists}-->
 					<div id="btn_divid">
-						<button id="btn_profil_id">Mein Profil</button>				
-					<!--Die Datenbank funder ist ${db2exists}-->
-						<button id="btn_profil_id" type="submit"  onclick="location.href='/new_project'">Projekt erstellen</button>
+						<a href="view_profile?user=alan@turing.com">Mein Profil</a>
 					</div>
 		</div>
 
