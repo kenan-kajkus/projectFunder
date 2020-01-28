@@ -6,7 +6,8 @@
 		<div id="header">
 			<h1> Project Funder</h1>
 		</div>
-
+		
+						<a href="new_project?user=${user.getEmail()}">Projekt Erstellen</a>
 		<div id="view_profile_divid">
 			<h2>Profil von: ${user.getFirstname()} </h2>
             <p>Benutzername:${user.getEmail() }</p>
@@ -28,6 +29,7 @@
 					<a href="https://google.de/">${project.getTitel()}</a>
 					<br><img src="TO BE FILLED" alt="Projekt Bild bitte füllen."/>
 					<p>Aktuell: ${project.getSpendenbetrag()} €</p>
+					<p>Limit: ${project.getFinanzierungsLimit()}</p>
 					<p>Status: ${project.getStatus()}</p>
 					</div>
 				</li>

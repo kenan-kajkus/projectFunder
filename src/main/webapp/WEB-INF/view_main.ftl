@@ -46,7 +46,7 @@
 				<#list fprojects as fproject>
 				<li id= "occupied_projects_li_id">
 					<div id="occupied_projects_list_divid">
-					<a href="https://google.de/">Projekt Name</a>
+					<a href="https://google.de/">${fproject.getTitel()}</a>
 					<img src="TO BE FILLED" alt="Projekt Bild bitte füllen."/>
 					<p>Erstellt von: Max</p>
 					<p>Aktueller Betrag: 0 Euro</p>

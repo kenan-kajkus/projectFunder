@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.bind.ParseConversionEvent;
+
 import com.ibm.db2.jcc.DB2Driver;
 
 import de.unidue.inf.is.domain.Project;
@@ -102,7 +104,43 @@ public final class DBUtil {
 				"FROM dbp061.PROJEKT t1\n" + 
 				"LEFT JOIN \n" + 
 				"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
-				"ON t1.KENNUNG = t2.PROJEKT");
+				"ON t1.KENNUNG = t2.PROJEKT WHERE STATUS = 'offen'");
+		
+    	 while (rs.next()) {
+    	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
+    	      }
+    	 rs.close();
+    	 stmt.close();
+    	 connection.commit();
+    	 connection.close();
+    	} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return list;
+    }
+
+    public static List<Project> getClosedProjects()
+    {
+    	List<Project> list = new ArrayList<>();
+    	Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	try {
+    	Statement stmt = null;
+    	ResultSet rs = null;
+    	 
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery("SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG\n" + 
+				"FROM dbp061.PROJEKT t1\n" + 
+				"LEFT JOIN \n" + 
+				"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
+				"ON t1.KENNUNG = t2.PROJEKT WHERE STATUS = 'geschlossen'");
 		
     	 while (rs.next()) {
     	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
@@ -150,7 +188,7 @@ public final class DBUtil {
     }
 
 
-	public static void insertProject(String title, String description, String financeLimit) throws SQLException {
+	public static void insertProject(String ersteller, String title, String description, String financeLimit) throws SQLException {
 		String inserNewPRojectSql = "INSERT INTO dbp061.PROJEKT (TITEL, BESCHREIBUNG, ERSTELLER, STATUS, Finanzierungslimit, Kategorie ) VALUES (?,?,?,?,?,?)";
 		Connection connection = null;
     	try {
@@ -163,9 +201,9 @@ public final class DBUtil {
     	PreparedStatement ps = connection.prepareStatement(inserNewPRojectSql);
     	ps.setString(1, title);
     	ps.setString(2, description);
-    	ps.setString(3, "alan@turing.com");
+    	ps.setString(3, ersteller);
     	ps.setString(4, "offen");
-    	ps.setInt(5, 5);
+    	ps.setInt(5,Integer.parseInt(financeLimit) );
     	ps.setInt(6, 1);
     	ps.executeUpdate();
     	connection.commit();
