@@ -33,7 +33,6 @@ public final class UserStore implements Closeable {
             PreparedStatement preparedStatement = connection
                             .prepareStatement("insert into user (firstname, lastname) values (?, ?)");
             preparedStatement.setString(1, userToAdd.getFirstname());
-            preparedStatement.setString(2, userToAdd.getLastname());
             preparedStatement.executeUpdate();
         }
         catch (SQLException e) {

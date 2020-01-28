@@ -38,4 +38,18 @@ public final class ViewMainServlet extends HttpServlet {
         request.getRequestDispatcher("view_main.ftl").forward(request, response);
            
     }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	projects = DBUtil.getProjects();
+    	
+		finishedProjects = DBUtil.getClosedProjects();
+		
+    	request.setAttribute("projects", projects);
+    	request.setAttribute("fprojects", finishedProjects);
+        
+
+        request.getRequestDispatcher("view_main.ftl").forward(request, response);
+           
+    }
 }
