@@ -3,6 +3,7 @@ package de.unidue.inf.is.utils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -100,14 +101,14 @@ public final class DBUtil {
     	ResultSet rs = null;
     	 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG\n" + 
+		rs = stmt.executeQuery("SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG , t1.KENNUNG\n" + 
 				"FROM dbp061.PROJEKT t1\n" + 
 				"LEFT JOIN \n" + 
 				"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
 				"ON t1.KENNUNG = t2.PROJEKT WHERE STATUS = 'offen'");
 		
     	 while (rs.next()) {
-    	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
+    	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7), rs.getInt(8)));
     	      }
     	 rs.close();
     	 stmt.close();
@@ -136,14 +137,14 @@ public final class DBUtil {
     	ResultSet rs = null;
     	 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG\n" + 
+		rs = stmt.executeQuery("SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG , t1.KENNUNG\n" + 
 				"FROM dbp061.PROJEKT t1\n" + 
 				"LEFT JOIN \n" + 
 				"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
 				"ON t1.KENNUNG = t2.PROJEKT WHERE STATUS = 'geschlossen'");
 		
     	 while (rs.next()) {
-    	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
+    	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7),rs.getInt(8)));
     	      }
     	 rs.close();
     	 stmt.close();
@@ -256,7 +257,7 @@ public final class DBUtil {
 
 	public static List<Project> getProjects(String userEmail) throws SQLException {
 		List<Project> list = new ArrayList<>();
-		String project ="SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG\n" + 
+		String project ="SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG, t1.KENNUNG " + 
 		"FROM dbp061.PROJEKT t1\n" + 
 		"LEFT JOIN \n" + 
 		"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
@@ -276,7 +277,7 @@ public final class DBUtil {
     	ps.setString(1, userEmail);
     	rs = ps.executeQuery();
     	while (rs.next()) {
-	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
+	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7), rs.getInt(8)));
 	      }
 		return list;
 	}
@@ -303,9 +304,56 @@ public final class DBUtil {
     	ps.setString(1, userEmail);
     	rs = ps.executeQuery();
     	while (rs.next()) {
-	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7)));
+	        list.add(new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7), rs.getInt(8)));
 	      }
 		return list;
+	}
+	public static Project getProjectById(int id) throws SQLException {
+		Project p = null;
+		String project ="SELECT t1.TITEL, t1.BESCHREIBUNG, t1.STATUS, t1.FINANZIERUNGSLIMIT, t1.ERSTELLER, t1.KATEGORIE, COALESCE(t2.SPENDENBETRAG, 0) SPENDENBETRAG, t1.KENNUNG\n" + 
+				"FROM dbp061.PROJEKT t1\n" + 
+				"LEFT JOIN \n" + 
+				"	(SELECT PROJEKT, SUM(SPENDENBETRAG) as SPENDENBETRAG FROM dbp061.SPENDEN GROUP BY PROJEKT) t2\n" + 
+				"ON t1.KENNUNG = t2.PROJEKT WHERE KENNUNG = ?";
+		Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	ResultSet rs = null;
+		PreparedStatement ps = connection.prepareStatement(project);
+    	ps.setInt(1, id);
+    	rs = ps.executeQuery();
+    	while (rs.next()) {
+    	 p = new Project(rs.getString(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getString(5), rs.getInt(6), rs.getFloat(7), rs.getInt(8));
+    		
+    	}
+    	return p;
+    }
+
+
+	public static void newSpende(int spende, int kennung) throws SQLException {
+		String inserNewPRojectSql = "INSERT INTO dbp061.SPENDEN (SPENDER, PROJEKT, SPENDENBETRAG, SICHTBARKEIT) VALUES (?,?,?,?)";
+		Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	PreparedStatement ps = connection.prepareStatement(inserNewPRojectSql);
+    	ps.setString(1, "dummy@dummy.com");
+    	ps.setInt(2, kennung);
+    	ps.setBigDecimal(3, new BigDecimal(spende));
+    	ps.setString(4, "oeffentlich");
+    	ps.executeUpdate();
+    	connection.commit();
+    	connection.close();
+		
 	}
 
 }

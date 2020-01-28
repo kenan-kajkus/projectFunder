@@ -26,7 +26,7 @@
 				<#list projects as project>
 				<li id= "open_projects_li_id">
 					<div id="open_projects_list_divid">
-					<p>${project.getTitel()}</p>
+					<p><a href=view_project?kennung=${project.getKennung()}>${project.getTitel()}</a></p>
 					<p>Erstellt von: ${project.getErsteller()}</p>
 					<p>Aktueller Betrag: ${project.getSpendenbetrag()} Euro</p>
 					</div>
