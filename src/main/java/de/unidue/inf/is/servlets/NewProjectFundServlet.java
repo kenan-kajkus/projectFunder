@@ -2,6 +2,8 @@ package de.unidue.inf.is.servlets;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.unidue.inf.is.domain.Project;
+import de.unidue.inf.is.domain.Spende;
 import de.unidue.inf.is.utils.DBUtil;
 
 
@@ -26,6 +29,8 @@ public final class NewProjectFundServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	
 		request.setAttribute("project", p);
         request.getRequestDispatcher("new_project_fund.ftl").forward(request, response);
     }

@@ -41,10 +41,9 @@
 
             <div id="fund_list_id">
                <h3>Liste der Spender</h3>
-                <p>NutzerA: 10€</p>
-                <p>Spammer123:  120€</p> 
-                <p>CocaColaFigher3:  120€</p>
-                <p>LoneGangster5: 120€</p>
+               	<#list spenderList as spender>
+                <p>${spender.getSpender()}: ${spender.getSpende()}</p>
+                </#list>
             </div>
              <input style="padding:1em 1em 1em 1em;" type="submit" value="Kommentieren">
             <div id="comments_id">

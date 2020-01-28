@@ -19,6 +19,7 @@ import javax.xml.bind.ParseConversionEvent;
 import com.ibm.db2.jcc.DB2Driver;
 
 import de.unidue.inf.is.domain.Project;
+import de.unidue.inf.is.domain.Spende;
 import de.unidue.inf.is.domain.User;
 
 
@@ -355,5 +356,27 @@ public final class DBUtil {
     	connection.close();
 		
 	}
-
+	
+	public static List<Spende>  getSpende(int kennung) throws SQLException
+	{
+		List<Spende> list = new ArrayList<>();
+		String getSpendenSql = "SELECT SPENDER,SPENDENBETRAG FROM dbp061.SPENDEN WHERE PROJEKT = ?";
+		Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	ResultSet rs = null;
+    	PreparedStatement ps = connection.prepareStatement(getSpendenSql);
+    	ps.setInt(1, kennung);
+    	rs = ps.executeQuery();
+    	while (rs.next()) {
+    		list.add(new Spende(kennung, rs.getString(1), rs.getInt(2)));
+       		
+       	}
+    	return list;
+	}
 }
