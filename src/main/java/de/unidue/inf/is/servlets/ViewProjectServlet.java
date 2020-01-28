@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.unidue.inf.is.domain.Kommentar;
 import de.unidue.inf.is.domain.Project;
 import de.unidue.inf.is.domain.Spende;
 import de.unidue.inf.is.utils.DBUtil;
@@ -26,6 +27,7 @@ public final class ViewProjectServlet extends HttpServlet {
     	Project p = null;
 
     	List<Spende> list = new ArrayList<>();
+    	List<Kommentar> kommentare = new ArrayList<>();
     		String kennung = request.getParameter("kennung");
     		try {
 				p = DBUtil.getProjectById(Integer.parseInt(kennung));
@@ -39,8 +41,15 @@ public final class ViewProjectServlet extends HttpServlet {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
+    		try {
+    			kommentare = DBUtil.getKommentar(Integer.parseInt(kennung));
+    		} catch (NumberFormatException | SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
     		request.setAttribute("project", p);
     		request.setAttribute("spenderList", list);
+    		request.setAttribute("kommentare", kommentare);
             request.getRequestDispatcher("view_project.ftl").forward(request, response);                
     }
 

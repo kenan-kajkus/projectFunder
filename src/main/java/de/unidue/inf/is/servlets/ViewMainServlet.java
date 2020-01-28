@@ -29,21 +29,13 @@ public final class ViewMainServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	projects = DBUtil.getProjects();
     	
-			finishedProjects = DBUtil.getClosedProjects();
+		finishedProjects = DBUtil.getClosedProjects();
 		
     	request.setAttribute("projects", projects);
     	request.setAttribute("fprojects", finishedProjects);
-        boolean databaseExists = DBUtil.checkDatabaseExistsExternal();
-
-        if (databaseExists) {
-            request.setAttribute("db2exists", "vorhanden! Supi!");
-        }
-        else {
-            request.setAttribute("db2exists", "nicht vorhanden :-(");
-        }
-        request.getRequestDispatcher("view_main.ftl").forward(request, response);
-   
         
-    }
 
+        request.getRequestDispatcher("view_main.ftl").forward(request, response);
+           
+    }
 }

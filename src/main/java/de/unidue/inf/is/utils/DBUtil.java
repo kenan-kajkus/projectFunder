@@ -18,6 +18,7 @@ import javax.xml.bind.ParseConversionEvent;
 
 import com.ibm.db2.jcc.DB2Driver;
 
+import de.unidue.inf.is.domain.Kommentar;
 import de.unidue.inf.is.domain.Project;
 import de.unidue.inf.is.domain.Spende;
 import de.unidue.inf.is.domain.User;
@@ -378,5 +379,68 @@ public final class DBUtil {
        		
        	}
     	return list;
+	}
+	
+	public static List<Kommentar> getKommentar(int kennung) throws SQLException
+	{
+		List<Kommentar> list = new ArrayList<>();
+		String getKommentarSql = "SELECT t1.BENUTZER, t2.TEXT \r\n" + 
+				"FROM dbp061.SCHREIBT t1\r\n" + 
+				"LEFT JOIN\r\n" + 
+				"DBP061.KOMMENTAR t2\r\n" + 
+				"ON t1.KOMMENTAR = t2.ID \r\n" + 
+				"WHERE t1.PROJEKT = ?";
+		Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	ResultSet rs = null;
+    	PreparedStatement ps = connection.prepareStatement(getKommentarSql);
+    	ps.setInt(1, kennung);
+    	rs = ps.executeQuery();
+    	while (rs.next()) {
+    		list.add(new Kommentar(kennung, rs.getString(1), rs.getString(2)));
+       		
+       	}
+    	return list;
+	}
+
+	
+	public static void insertKomment(int kennung, String kommentar) throws SQLException {
+		String selectMaxSQL = "SELECT MAX(ID) FROM DBP061.KOMMENTAR";
+		
+		String insertKommentarSql = "INSERT INTO DBP061.KOMMENTAR (ID, TEXT, SICHTBARKEIT ) VALUES (?,?,'oeffentlich') "; 
+		
+		Connection connection = null;
+    	try {
+    		connection = getExternalConnection();
+    		connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+    	ResultSet r;
+    	PreparedStatement p = connection.prepareStatement(selectMaxSQL);
+    	r = p.executeQuery();
+    	int i=0;
+    	while(r.next()) {
+    		i = r.getInt(1)	;
+    	}
+    	PreparedStatement ps = connection.prepareStatement(insertKommentarSql);
+    	ps.setInt(1, i+1);
+    	ps.setString(2, kommentar);
+    	ps.executeUpdate();
+    	
+    	String insertSchreibtSql = "INSERT INTO DBP061.SCHREIBT(BENUTZER, PROJEKT, KOMMENTAR ) VALUES ('alan@turing.com',?,?) "; 
+    	PreparedStatement psb = connection.prepareStatement(insertSchreibtSql);
+    	psb.setInt(1, kennung);
+    	psb.setInt(2, i +1);
+    	psb.executeUpdate();
+    	connection.commit();
+    	i++;
 	}
 }

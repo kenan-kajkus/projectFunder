@@ -9,17 +9,17 @@
 
 		<div id="new_comment_divid">
 			<div id="ul_divid">
-				<form>
+				<form method="post">
 			        <ul>
 			            <li>
-  				            <h2>ProjectName</h2>
+  				            <h2>${project.getTitel()}</h2>
 			            </li>
 			
 			            <li>
-				            <h2>Kommentieren:</h2> <textarea></textarea>
+				            <h2>Kommentieren:</h2> <input type="text" name="komment"><br>
 			            </li>
 			            <li>
-				            <input style="padding:1em 1em 1em 1em;" type="submit" value="Kommentar hinzufügen">
+				            <a href=new_comment?kennung=${project.getKennung()}><input style="padding:1em 1em 1em 1em;" type="submit" value="Kommentar hinzufügen"></a>
 			            </li>
 			        </ul>	
 			    </form>

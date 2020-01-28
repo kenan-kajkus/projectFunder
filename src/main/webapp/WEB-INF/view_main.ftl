@@ -7,7 +7,6 @@
 			<h1> Project Funder</h1>
 		</div>
 		<div id="btn_base_divid">
-					<!--Die Datenbank funder ist ${db2exists}-->
 					<div id="btn_divid">
 						<a href="view_profile?user=alan@turing.com">Mein Profil</a>
 					</div>
